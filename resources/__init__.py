@@ -1,0 +1,1 @@
+from .qrgen import QR
