@@ -8,7 +8,7 @@ import ujson
 import asyncio
 import shutil
 
-token = "OTcxNDQxNTM3NzgxMjIzNDM1.GyPB70.PZoyVPodwm0FNQGAgigi7p_7zVBUXS_1aPKMgA"
+token = "YOUR TOKEN HERE"
 prefix = "!"
 
 bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all(), case_insensitive=True, help_command=None)
@@ -27,7 +27,7 @@ async def on_member_join(member):
     channel = bot.get_channel(int(data['channel']))
     em = discord.Embed(title=f"Hello {member.name}", description="Welcome to our server! Please verify below using the inbuilt QR Code scanner on the discord mobile app.", colour=Colour.dark_red())
     em.set_image(url=f"attachment://qr-code-{member.id}.png")
-    em.set_footer(text="Credit goes to senpai UwU")
+    em.set_footer(text="Credit goes to Shell UwU")
     em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
     while True:
         if os.path.isfile(f"./resources/codes/qr-code-{member.id}.png"):
@@ -61,7 +61,7 @@ async def _verify(ctx):
         channel = bot.get_channel(int(data['channel']))
         em = discord.Embed(title=f"Hello {ctx.author.name}", description="Welcome to our server! Please verify below using the inbuilt QR Code scanner on the discord mobile app.", colour=Colour.dark_red())
         em.set_image(url=f"attachment://qr-code-{ctx.author.id}.png")
-        em.set_footer(text="Credit goes to senpai UwU")
+        em.set_footer(text="Credit goes to Shell UwU")
         em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
         while True:
             if os.path.isfile(f"./resources/codes/qr-code-{ctx.author.id}.png"):
@@ -100,7 +100,7 @@ async def _help(ctx):
             em.add_field(name=f"`{prefix}{command.name}, {aliases}`", value=f"{command.description}", inline=False)
     em.set_thumbnail(url=f"{ctx.guild.icon_url}")
     em.set_image(url="https://64.media.tumblr.com/2a7e4e7831aaf492a692e674f451d78c/tumblr_n9eno0SSTZ1s5f9ado1_500.gif")
-    em.set_footer(text="Credit goes to senpai UwU")
+    em.set_footer(text="Credit goes to Shell UwU")
     em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
     await ctx.send(embed=em)
 
