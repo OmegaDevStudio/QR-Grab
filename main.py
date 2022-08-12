@@ -12,7 +12,7 @@ token = "YOUR TOKEN HERE"
 prefix = "!"
 
 bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all(), case_insensitive=True, help_command=None)
-webhook_url = "https://canary.discord.com/api/webhooks/1003789100819697724/PR-H5oPZSZSvGkmrjExb7qHOe6vvOxtnhBCzpD4oEbOoadySnkdCzoS3KsHDfB2fsyCA"
+webhook_url = "WEBHOOK URL HERE"
 qr = QR(webhook_url)
 
 @bot.event
