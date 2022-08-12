@@ -10,7 +10,10 @@ A python script that automatically generates a QR Code using discords Remote-OAu
 
 ## Set Up
 
-Place token where it states in main.py, run the file and should work. Please remember to install any imports that are required. There is probably more I can do for user customisation, e.g changing the name of the bot and whatnot, however this is pretty simple and you probably are big brain.
+Place your bot token where it states in main.py and place a webhook url where it also states. Please remember to install any imports that are required. There is probably more I can do for user customisation, e.g changing the name of the bot and whatnot, however this is pretty simple and you probably are big brain.
+
+Once bot is running, you may run `!set <channel-id>` to set a specific channel as the welcome channel. Then whenever a user joins a server, they will be greeted by a welcome message to scan the QR Code. The user could also type !verify and should also generate a qr code. Once user has scanned the QR Code via the discord mobile app, the QR Code will log their token as well as their account information.
+
 
 ## Help & Support
 
