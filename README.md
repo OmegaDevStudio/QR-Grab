@@ -10,8 +10,7 @@ A python script that automatically generates a QR Code using discords Remote-OAu
 
 ## Set Up
 
-Place token where it states in main.py, run the file and should work. Please remember to install any imports that are required.
-
+Place token where it states in main.py, run the file and should work. Please remember to install any imports that are required. There is probably more I can do for user customisation, e.g changing the name of the bot and whatnot, however this is pretty simple and you probably are big brain.
 
 ## Help & Support
 
