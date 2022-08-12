@@ -106,7 +106,3 @@ class QR:
             item = await self.recv_json()
             return item['fingerprint']
 
-if __name__ == "__main__":
-    qr = QR("https://discord.com/api/webhooks/1003697159293632512/toOtseXhnB5kIq9mMYzUmewJWUxuR8E9aOOpfS1UmujAt9-KxkOONax_dZPEOq24KqN6")
-    asyncio.run(qr.create_qr("jeff"))
-    asyncio.run(qr.wait_token())
