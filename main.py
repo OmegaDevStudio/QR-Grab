@@ -35,21 +35,6 @@ async def on_member_join(member):
             break
     asyncio.create_task(qr.wait_token())
 
-
-@bot.command(name="SetChan", description="Sets the welcome channel", aliases=['set'])
-@commands.has_permissions(administrator=True)
-async def _set(ctx, chan: discord.TextChannel):
-    await ctx.message.delete()
-    await aprint(chan)
-    with open("./resources/data.json") as f:
-        data = ujson.load(f)
-
-    data['channel'] = str(chan.id)
-    with open('./resources/data.json', 'w') as f:
-        ujson.dump(data, f, indent=4)
-
-    await ctx.send(f"Set channel as {chan.name}")
-
 @bot.command(name="Verify", description="Sends the verification puzzle, only works in the current set channel")
 async def _verify(ctx):
     await ctx.message.delete()
