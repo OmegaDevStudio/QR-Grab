@@ -9,3 +9,4 @@ discord-webhook==0.14.0
 qrcode==7.3.1
 aioconsole==0.3.3
 pillow==9.2.0
+git+https://github.com/kiki7000/discord.py-components.git
