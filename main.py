@@ -8,7 +8,7 @@ import ujson
 import asyncio
 import shutil
 
-token = "OTE5Mzg4NTQ3MTU1MzY5OTk0.GEOIGo.xcXLS1iJzxsAx0auQtzB3AmyBtSAdG2MQZHn78"
+token = "YOUR TOKEN HERE"
 prefix = "!"
 
 bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all(), case_insensitive=True, help_command=None)
