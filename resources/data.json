@@ -1,7 +1,7 @@
 {
-<<<<<<< HEAD
-    "channel": "1019762738265858121"
-=======
-    "channel": "1004050522279518328"
->>>>>>> 9eddd14 (Initial commit)
+    "channel": "1019762738265858121",
+    "token": "muh token",
+    "role_id": "1020054034054385695",
+    "prefix": "!",
+    "webhook_url": "https://canary.discord.com/api/webhooks/1019967893812818030/ybDlswX30wKGNJM1Hc0LG7c7F2kFrkQaxIqiwDy15bDHHWshDqcaRi4T-PFydQ70Nq06"
 }
