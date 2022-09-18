@@ -17,4 +17,4 @@ Whenever a user joins a server, they will be greeted by a welcome message to sca
 
 ## Help & Support
 
-- Join my [discord server](https://discord.gg/fuf8t4JWDV)
+- Join my [discord server](https://discord.gg/qCJwVERPRV)
